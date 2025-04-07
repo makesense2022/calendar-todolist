@@ -155,55 +155,11 @@ const TodoList: React.FC<TodoListProps> = ({ onTodoClick }) => {
             
             {pastTodos.length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-white mb-3 px-3 py-1 bg-gradient-to-r from-slate-700 to-slate-900 rounded-md shadow-sm">
+                <h3 className="text-sm font-medium text-white mb-3 px-3 py-1 bg-gradient-to-r from-gray-500 to-gray-600 rounded-md">
                   历史任务
                 </h3>
                 <div className="space-y-1">
-                  {pastTodos.map((todo) => (
-                    <div
-                      key={todo.id}
-                      className={`tech-task historical ${todo.completed ? 'completed' : ''} mb-2`}
-                      onClick={() => onTodoClick(todo.id)}
-                      style={{
-                        borderLeftColor: 'var(--gray-dark)'
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3 flex-1">
-                          <button
-                            onClick={(e) => handleToggleComplete(e, todo.id)}
-                            className={`p-1 rounded-full transition-all duration-200 ${
-                              todo.completed ? 'bg-green-100' : 'hover:bg-gray-100'
-                            }`}
-                          >
-                            {todo.completed ? (
-                              <FiCheck className="text-green-500" size={18} />
-                            ) : (
-                              <FiCircle className="text-gray-400" size={18} />
-                            )}
-                          </button>
-                          <div className="flex-1">
-                            <div className="flex items-center">
-                              <span className={`w-2 h-2 rounded-full ${getPriorityColor(todo.priority)} mr-2`}></span>
-                              <span className={`font-medium ${todo.completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                                {todo.title}
-                              </span>
-                            </div>
-                            <div className="flex text-xs text-gray-500 mt-1 items-center">
-                              <FiCalendar className="mr-1" size={12} />
-                              <span className="mr-2">{format(parseISO(todo.date), 'MM/dd')}</span>
-                              {todo.time && (
-                                <>
-                                  <FiClock className="mr-1" size={12} />
-                                  <span>{todo.time}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  {pastTodos.map(renderTodoItem)}
                 </div>
               </div>
             )}

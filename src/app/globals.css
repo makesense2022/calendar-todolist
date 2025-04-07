@@ -110,25 +110,6 @@ body {
     rgba(6, 214, 160, 0) 100%);
 }
 
-/* 历史任务样式 */
-.tech-task.historical {
-  background: rgba(245, 245, 245, 0.95);
-  border-left: 3px solid var(--gray-dark);
-}
-
-.tech-task.historical::before {
-  background: linear-gradient(90deg, 
-    rgba(75, 85, 99, 0.15) 0%, 
-    rgba(75, 85, 99, 0.08) 50%, 
-    rgba(75, 85, 99, 0) 100%);
-  opacity: 0.8;
-}
-
-.tech-task.historical:hover {
-  background: rgba(250, 250, 250, 0.98);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .glow-effect {
   position: relative;
 }
