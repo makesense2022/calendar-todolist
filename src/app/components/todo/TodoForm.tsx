@@ -51,28 +51,28 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
   };
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative">
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-800">
             {todoToEdit ? '编辑任务' : '新建任务'}
           </h2>
           <button 
-            className="text-gray-400 hover:text-gray-600" 
+            className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100" 
             onClick={onClose}
           >
-            <FiX size={24} />
+            <FiX size={20} />
           </button>
         </div>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               标题 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
               placeholder="请输入任务标题"
               {...register('title', { required: '请输入任务标题' })}
             />
@@ -99,7 +99,8 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                       }
                     }}
                     dateFormat="yyyy/MM/dd"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    wrapperClassName="w-full"
                   />
                 )}
               />
@@ -111,7 +112,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
               </label>
               <input
                 type="time"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 {...register('time')}
               />
             </div>
@@ -121,35 +122,35 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
             <label className="block text-sm font-medium text-gray-700 mb-1">
               优先级
             </label>
-            <div className="flex space-x-4">
+            <div className="flex space-x-6">
               <label className="flex items-center">
                 <input
                   type="radio"
                   value="low"
-                  className="mr-2"
+                  className="w-4 h-4 text-indigo-600 mr-2"
                   {...register('priority')}
                 />
-                <span className="inline-block w-3 h-3 rounded-full bg-success mr-1"></span>
+                <span className="inline-block w-3 h-3 rounded-full bg-green-500 mr-1"></span>
                 低
               </label>
               <label className="flex items-center">
                 <input
                   type="radio"
                   value="medium"
-                  className="mr-2"
+                  className="w-4 h-4 text-indigo-600 mr-2"
                   {...register('priority')}
                 />
-                <span className="inline-block w-3 h-3 rounded-full bg-warning mr-1"></span>
+                <span className="inline-block w-3 h-3 rounded-full bg-yellow-500 mr-1"></span>
                 中
               </label>
               <label className="flex items-center">
                 <input
                   type="radio"
                   value="high"
-                  className="mr-2"
+                  className="w-4 h-4 text-indigo-600 mr-2"
                   {...register('priority')}
                 />
-                <span className="inline-block w-3 h-3 rounded-full bg-danger mr-1"></span>
+                <span className="inline-block w-3 h-3 rounded-full bg-red-500 mr-1"></span>
                 高
               </label>
             </div>
@@ -160,7 +161,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
               重复
             </label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
               {...register('repeat')}
             >
               <option value="none">不重复</option>
@@ -175,14 +176,14 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
               备注
             </label>
             <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary min-h-[100px]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 min-h-[100px] resize-none"
               placeholder="添加备注..."
               {...register('note')}
             ></textarea>
           </div>
           
-          <div className="flex justify-between pt-4">
-            {todoToEdit && (
+          <div className="flex justify-between pt-4 border-t border-gray-200 mt-4">
+            {todoToEdit ? (
               <Button
                 type="button"
                 variant="destructive"
@@ -192,19 +193,24 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                 <FiTrash className="mr-1" />
                 删除
               </Button>
+            ) : (
+              <div></div>
             )}
             
-            <div className={`flex space-x-3 ${todoToEdit ? '' : 'ml-auto'}`}>
-              <Button
+            <div className="flex space-x-3">
+              <button 
                 type="button"
-                variant="outline"
                 onClick={onClose}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none"
               >
                 取消
-              </Button>
-              <Button type="submit">
+              </button>
+              <button 
+                type="submit"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none"
+              >
                 {todoToEdit ? '保存' : '创建'}
-              </Button>
+              </button>
             </div>
           </div>
         </form>

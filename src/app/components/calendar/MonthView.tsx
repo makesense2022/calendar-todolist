@@ -8,96 +8,14 @@ import {
   format, 
   isSameMonth, 
   isToday,
+  addWeeks,
   isSameDay
 } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useTodoStore } from '@/store/useTodoStore';
 import { motion } from 'framer-motion';
 import { Todo } from '@/types/todo';
-
-// 定义内联样式对象
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    height: '100%'
-  },
-  weekHeader: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    borderBottom: '1px solid #e5e7eb',
-    textAlign: 'center' as const,
-    padding: '0.5rem 0',
-    fontWeight: 500,
-    color: '#6B7280'
-  },
-  weekDay: {
-    fontSize: '0.875rem'
-  },
-  calendarGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    flexGrow: 1
-  },
-  calendarCell: {
-    aspectRatio: '1/1',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative' as const,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    border: '1px solid #e5e7eb'
-  },
-  calendarCellOutsideMonth: {
-    backgroundColor: 'rgba(243, 244, 246, 0.5)',
-    color: '#9CA3AF'
-  },
-  calendarCellToday: {
-    backgroundColor: 'rgba(79, 70, 229, 0.1)'
-  },
-  dayCircle: {
-    height: '2rem',
-    width: '2rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '9999px',
-    marginBottom: '0.25rem'
-  },
-  todayCircle: {
-    backgroundColor: '#4F46E5',
-    color: 'white'
-  },
-  taskDotsContainer: {
-    display: 'flex',
-    flexWrap: 'wrap' as const,
-    justifyContent: 'center',
-    marginTop: '0.25rem',
-    maxWidth: '70%'
-  },
-  taskDot: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    margin: '1px'
-  },
-  dotHigh: {
-    backgroundColor: '#EF4444'
-  },
-  dotMedium: {
-    backgroundColor: '#F59E0B'
-  },
-  dotLow: {
-    backgroundColor: '#10B981'
-  },
-  moreTasksLabel: {
-    fontSize: '0.75rem',
-    color: '#6B7280',
-    marginLeft: '0.25rem'
-  }
-};
+import { FiClipboard } from 'react-icons/fi';
 
 interface DayProps {
   date: Date;
@@ -116,33 +34,18 @@ const DayCell: React.FC<DayProps> = ({
 }) => {
   const dayNumber = format(date, 'd');
   
-  // 合并单元格样式
-  const cellStyle = {
-    ...styles.calendarCell,
-    ...(isCurrentMonth ? {} : styles.calendarCellOutsideMonth),
-    ...(isCurrentDay ? styles.calendarCellToday : {})
-  };
-  
-  // 合并日期圆圈样式
-  const dayCircleStyle = {
-    ...styles.dayCircle,
-    ...(isCurrentDay ? styles.todayCircle : {})
-  };
-  
   // 渲染任务点
   const renderTaskDots = () => {
     return todos.slice(0, 3).map((todo, index) => {
-      let dotStyle = { ...styles.taskDot };
+      let dotColorClass = 'bg-green-500'; // 默认低优先级
       
       if (todo.priority === 'high') {
-        dotStyle = { ...dotStyle, ...styles.dotHigh };
+        dotColorClass = 'bg-red-500';
       } else if (todo.priority === 'medium') {
-        dotStyle = { ...dotStyle, ...styles.dotMedium };
-      } else {
-        dotStyle = { ...dotStyle, ...styles.dotLow };
+        dotColorClass = 'bg-yellow-500';
       }
       
-      return <div key={todo.id} style={dotStyle} />;
+      return <div key={todo.id} className={`w-1.5 h-1.5 rounded-full ${dotColorClass} m-0.5`} />;
     });
   };
   
@@ -151,21 +54,29 @@ const DayCell: React.FC<DayProps> = ({
   
   return (
     <div 
-      style={cellStyle}
+      className={`h-full flex flex-col items-center justify-center relative cursor-pointer transition-all border border-gray-200
+        ${!isCurrentMonth ? 'bg-gray-50/50 text-gray-400' : ''} 
+        ${isCurrentDay ? 'bg-indigo-50/50' : ''}`}
       onClick={() => onDayClick(date)}
     >
-      <div style={dayCircleStyle}>
+      <div className={`h-8 w-8 flex items-center justify-center rounded-full mb-1 
+        ${isCurrentDay ? 'bg-indigo-600 text-white' : ''}`}>
         {dayNumber}
       </div>
       
-      {todos.length > 0 && (
-        <div style={styles.taskDotsContainer}>
+      {todos.length > 0 ? (
+        <div className="flex flex-wrap justify-center mt-1 max-w-[70%]">
           {renderTaskDots()}
           {hasMoreTasks && (
-            <span style={styles.moreTasksLabel}>+{todos.length - 3}</span>
+            <span className="text-xs text-gray-500 ml-1">+{todos.length - 3}</span>
           )}
         </div>
-      )}
+      ) : isCurrentDay && isCurrentMonth ? (
+        <div className="flex flex-col items-center text-center">
+          <FiClipboard className="text-gray-800 mb-1" size={18} />
+          <span className="text-xs text-gray-500">今天没有任务</span>
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -188,23 +99,37 @@ const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
     
     // 日历视图的开始和结束（包括上月和下月的部分日期）
     const calendarStart = startOfWeek(monthStart, { locale: zhCN });
-    const calendarEnd = endOfWeek(monthEnd, { locale: zhCN });
+    // 确保日历至少显示6周，以便显示完整月份和必要的前后月份日期
+    let calendarEnd = endOfWeek(monthEnd, { locale: zhCN });
+    
+    // 计算日历网格行数，确保有足够的行显示所有日期
+    const calendarStartDay = calendarStart.getDay();
+    const daysInMonth = monthEnd.getDate();
+    const requiredRows = Math.ceil((calendarStartDay + daysInMonth) / 7);
+    
+    // 如果需要6行，调整日历结束日期
+    if (requiredRows > 5) {
+      calendarEnd = endOfWeek(addWeeks(monthStart, 5), { locale: zhCN });
+    }
     
     // 生成日历网格的日期数组
-    const daysInMonth = eachDayOfInterval({
+    const daysInCalendar = eachDayOfInterval({
       start: calendarStart,
       end: calendarEnd,
     });
     
-    setDays(daysInMonth);
+    setDays(daysInCalendar);
   }, [currentDate]);
   
+  // 计算是否显示"点击任意日期创建新任务"的提示
+  const showEmptyState = days.length > 0 && days.every(day => getTodosByDate(day).length === 0);
+
   return (
-    <div style={styles.container}>
+    <div className="flex flex-col h-full">
       {/* 星期标题行 */}
-      <div style={styles.weekHeader}>
+      <div className="grid grid-cols-7 border-b border-gray-200 py-2 text-center text-gray-500 font-medium">
         {weekDays.map((day) => (
-          <div key={day} style={styles.weekDay}>
+          <div key={day} className="text-sm">
             {day}
           </div>
         ))}
@@ -212,7 +137,7 @@ const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
       
       {/* 日期网格 */}
       <motion.div 
-        style={styles.calendarGrid}
+        className="grid grid-cols-7 grid-rows-6 flex-grow h-[calc(100%-40px)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -235,6 +160,13 @@ const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
           );
         })}
       </motion.div>
+      
+      {/* 空状态提示 */}
+      {showEmptyState && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/80 rounded-lg p-4 shadow-sm text-center">
+          <p className="text-gray-500 text-sm">点击任意日期创建新任务</p>
+        </div>
+      )}
     </div>
   );
 };
