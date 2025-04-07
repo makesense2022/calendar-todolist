@@ -15,7 +15,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDayClick }) => {
   return (
     <div className="h-full flex flex-col">
       <CalendarHeader />
-      <div className="flex-1 overflow-auto mt-4">
+      <div className="flex-1 overflow-auto mt-1">
         {currentView === 'month' && <MonthView onDayClick={onDayClick} />}
         {currentView === 'week' && <WeekView onDayClick={onDayClick} />}
         {currentView === 'day' && <DayView onDayClick={onDayClick} />}

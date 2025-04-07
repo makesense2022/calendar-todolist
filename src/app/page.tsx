@@ -1,16 +1,25 @@
 'use client';
 
-import { useState } from 'react';
-import Calendar from '@/components/calendar/Calendar';
-import TodoList from '@/components/todo/TodoList';
-import TodoForm from '@/components/todo/TodoForm';
+import React, { useState } from 'react';
+import Calendar from '../components/calendar/Calendar';
+import TodoList from '../components/todo/TodoList';
+import TodoForm from '../components/todo/TodoForm';
+import Weather from '../components/weather/Weather';
 import { useTodoStore } from '@/store/useTodoStore';
+import { format } from 'date-fns';
+import { zhCN } from 'date-fns/locale';
 
 export default function Home() {
-  const { selectedTodoId, setSelectedTodoId, isFormOpen, setIsFormOpen, todos } = useTodoStore();
-  const [initialFormDate, setInitialFormDate] = useState<Date | undefined>(undefined);
+  const { todos } = useTodoStore();
+  const [selectedTodoId, setSelectedTodoId] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [initialFormDate, setInitialFormDate] = useState<Date>(new Date());
+  
+  const formattedDate = format(new Date(), 'yyyy年MM月dd日 EEEE', { locale: zhCN });
+  
+  const todoToEdit = selectedTodoId ? todos.find(todo => todo.id === selectedTodoId) : undefined;
 
-  const handleNewTask = (date?: Date) => {
+  const handleNewTask = (date: Date) => {
     setSelectedTodoId(null);
     setInitialFormDate(date);
     setIsFormOpen(true);
@@ -24,38 +33,33 @@ export default function Home() {
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setSelectedTodoId(null);
-    setInitialFormDate(undefined);
   };
 
-  const todoToEdit = selectedTodoId 
-    ? todos.find(todo => todo.id === selectedTodoId) 
-    : undefined;
-
   return (
-    <main className="flex min-h-screen flex-col p-4 md:p-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold">日历任务清单</h1>
-      </header>
+    <main className="flex min-h-screen flex-col bg-gray-50">
+      <Weather />
       
-      <div className="flex flex-col md:flex-row gap-6 flex-1">
-        <div className="flex-1 bg-white p-4 rounded-lg shadow-md">
+      <div className="flex flex-1 overflow-hidden p-4">
+        <div className="flex-1 overflow-hidden rounded-lg shadow-lg mr-4">
           <Calendar onDayClick={handleNewTask} />
         </div>
-        
-        <div className="w-full md:w-80 lg:w-96 flex flex-col gap-6">
-          <div className="bg-white p-4 rounded-lg shadow-md flex-1">
+        <div className="w-96 flex flex-col rounded-lg shadow-lg overflow-hidden">
+          <div className="flex-1 overflow-hidden">
             <TodoList onTodoClick={handleEditTask} />
           </div>
         </div>
+        {isFormOpen && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+              <TodoForm 
+                todoToEdit={todoToEdit}
+                initialDate={initialFormDate}
+                onClose={handleCloseForm}
+              />
+            </div>
+          </div>
+        )}
       </div>
-      
-      {isFormOpen && (
-        <TodoForm 
-          todoToEdit={todoToEdit}
-          initialDate={initialFormDate}
-          onClose={handleCloseForm}
-        />
-      )}
     </main>
   );
 }

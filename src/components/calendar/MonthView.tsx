@@ -29,15 +29,15 @@ const Day: React.FC<DayProps> = ({ date, isCurrentMonth, todos, onClick }) => {
   
   return (
     <div 
-      className={`h-24 sm:h-28 border p-1 ${
-        isCurrentMonth ? 'bg-white' : 'bg-gray-50'
-      } ${isCurrentDay ? 'border-blue-500' : 'border-gray-200'}`}
+      className={`calendar-cell ${isCurrentDay ? 'today' : ''} ${
+        isCurrentMonth ? '' : 'bg-gray-50'
+      }`}
       onClick={() => onClick(date)}
     >
       <div className="flex justify-between">
         <div
-          className={`text-sm w-6 h-6 flex items-center justify-center rounded-full ${
-            isCurrentDay ? 'bg-blue-500 text-white' : isCurrentMonth ? 'text-gray-700' : 'text-gray-400'
+          className={`calendar-date ${isCurrentDay ? 'today' : ''} ${
+            isCurrentMonth ? 'text-gray-700' : 'text-gray-400'
           }`}
         >
           {format(date, 'd')}
@@ -49,11 +49,12 @@ const Day: React.FC<DayProps> = ({ date, isCurrentMonth, todos, onClick }) => {
           {todos.slice(0, 3).map((todo) => (
             <div 
               key={todo.id}
-              className={`text-xs mb-1 truncate rounded py-1 px-1.5 ${
-                todo.completed 
-                  ? 'line-through text-gray-400 bg-gray-50' 
-                  : 'bg-blue-50 text-blue-700'
-              }`}
+              className={`tech-task text-xs ${todo.completed ? 'completed' : ''} my-0 py-1`}
+              style={{
+                borderLeftColor: todo.completed ? 'var(--success)' : 
+                               todo.priority === 'high' ? 'var(--danger)' : 
+                               todo.priority === 'medium' ? 'var(--warning)' : 'var(--success)'
+              }}
             >
               <span className="mr-1">
                 {todo.completed ? '✓' : ''}
@@ -62,14 +63,14 @@ const Day: React.FC<DayProps> = ({ date, isCurrentMonth, todos, onClick }) => {
             </div>
           ))}
           {todos.length > 3 && (
-            <div className="text-xs text-gray-500 py-0.5">
+            <div className="text-xs bg-blue-50 text-blue-700 rounded-md px-2 py-1 mt-1 text-center">
               +{todos.length - 3} 更多
             </div>
           )}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-3/4 text-gray-300 text-xs">
-          <span>点击添加</span>
+          <span className="hover:text-blue-400 transition-colors">点击添加</span>
         </div>
       )}
     </div>
@@ -117,16 +118,16 @@ const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
   
   return (
     <div className="h-full flex flex-col">
-      <div className="grid grid-cols-7 gap-0 border-b border-l text-sm text-center font-medium">
+      <div className="grid grid-cols-7 gap-0 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-t-lg overflow-hidden">
         {weekdays.map((day, index) => (
-          <div key={index} className="py-2 px-1 border-r">
+          <div key={index} className="py-3 text-center">
             {day}
           </div>
         ))}
       </div>
       
-      <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-7 gap-0 border-b">
+      <div className="flex-1 overflow-y-auto bg-white">
+        <div className="grid grid-cols-7 gap-0">
           {calendarDays.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
             const dayTodos = todosByDate[dateKey] || [];

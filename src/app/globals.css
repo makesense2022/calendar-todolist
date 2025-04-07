@@ -3,14 +3,205 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --primary: #3a86ff;
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
+  --secondary: #7209b7;
+  --accent: #4cc9f0;
+  --success: #06d6a0;
+  --warning: #ffbe0b;
+  --danger: #ef476f;
+  --gray-dark: #1f2937;
+  --gray-light: #f3f4f6;
+  --background: #f8fafc;
+  --background-dark: #0f172a;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: rgb(var(--background-rgb));
+  background-color: var(--background);
+  color: var(--gray-dark);
 }
 
 /* 导入 DatePicker 样式 */
 @import 'react-datepicker/dist/react-datepicker.css';
+
+/* 科技感UI组件 */
+.tech-card {
+  @apply rounded-lg border border-gray-200 bg-white shadow-md overflow-hidden;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+  transition: all 0.3s ease;
+}
+
+.tech-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.tech-header {
+  @apply rounded-lg bg-white shadow-sm overflow-hidden;
+  background: linear-gradient(90deg, var(--primary-light) 0%, var(--primary) 100%);
+}
+
+.tech-button {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+}
+
+.tech-button:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tech-button-secondary {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+  background: linear-gradient(135deg, var(--gray-light) 0%, #ffffff 100%);
+  color: var(--gray-dark);
+  border: 1px solid #e5e7eb;
+}
+
+.tech-button-secondary:hover {
+  background: linear-gradient(135deg, #ffffff 0%, var(--gray-light) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tech-task {
+  @apply px-3 py-2 my-1 rounded-md transition-all duration-200;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-left: 3px solid var(--primary);
+}
+
+.tech-task::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(58, 134, 255, 0.1) 0%, 
+    rgba(58, 134, 255, 0.05) 50%, 
+    rgba(58, 134, 255, 0) 100%);
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.tech-task:hover {
+  transform: translateX(2px);
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.tech-task.completed {
+  border-left: 3px solid var(--success);
+  background: rgba(250, 250, 250, 0.8);
+}
+
+.tech-task.completed::before {
+  background: linear-gradient(90deg, 
+    rgba(6, 214, 160, 0.1) 0%, 
+    rgba(6, 214, 160, 0.05) 50%, 
+    rgba(6, 214, 160, 0) 100%);
+}
+
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  background: linear-gradient(45deg, var(--primary), var(--accent), var(--primary));
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
+
+.glow-effect:hover::after {
+  opacity: 0.6;
+}
+
+/* 日历特定样式 */
+.calendar-cell {
+  @apply border border-gray-200 transition-all duration-200 p-1;
+  min-height: 6rem;
+}
+
+.calendar-cell:hover {
+  @apply bg-blue-50;
+}
+
+.calendar-cell.today {
+  @apply border-blue-400;
+  background: linear-gradient(135deg, rgba(60, 130, 255, 0.1) 0%, rgba(76, 201, 240, 0.1) 100%);
+}
+
+.calendar-date {
+  @apply w-7 h-7 flex items-center justify-center text-sm rounded-full mb-1;
+}
+
+.calendar-date.today {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-slot {
+  @apply border-b border-gray-200 relative;
+  min-height: 3rem;
+}
+
+.time-label {
+  @apply text-xs text-gray-500 pr-2;
+  position: sticky;
+  left: 0;
+}
+
+/* 动画效果 */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(60, 130, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(60, 130, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(60, 130, 255, 0);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
