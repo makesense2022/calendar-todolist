@@ -10,7 +10,7 @@ interface CalendarHeaderProps {
 }
 
 const CalendarHeader: React.FC<CalendarHeaderProps> = ({ onClose }) => {
-  const { view, setView } = useViewStore();
+  const { currentView, setCurrentView } = useViewStore();
   const { currentDate, setCurrentDate } = useDateStore();
 
   const handlePrevMonth = () => {
@@ -22,7 +22,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ onClose }) => {
   };
 
   const handleViewChange = (newView: 'day' | 'week' | 'month') => {
-    setView(newView);
+    setCurrentView(newView);
   };
 
   return (
@@ -54,7 +54,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ onClose }) => {
         <div className="bg-gray-100 rounded-lg p-1 flex">
           <button
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              view === 'day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              currentView === 'day' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => handleViewChange('day')}
           >
@@ -62,7 +62,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ onClose }) => {
           </button>
           <button
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              view === 'week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              currentView === 'week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => handleViewChange('week')}
           >
@@ -70,7 +70,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ onClose }) => {
           </button>
           <button
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              view === 'month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              currentView === 'month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => handleViewChange('month')}
           >

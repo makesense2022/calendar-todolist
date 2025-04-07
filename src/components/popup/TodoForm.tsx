@@ -9,7 +9,7 @@ interface TodoFormProps {
 }
 
 const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoId, onClose }) => {
-  const { todos, addTodo, updateTodo, deleteTodo } = useTodoStore();
+  const { todos, addTodo, updateTodo, removeTodo } = useTodoStore();
   
   const [formData, setFormData] = React.useState({
     title: '',
@@ -74,7 +74,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoId, onClose }) => 
   
   const handleDelete = () => {
     if (todoId) {
-      deleteTodo(todoId);
+      removeTodo(todoId);
       onClose();
     }
   };

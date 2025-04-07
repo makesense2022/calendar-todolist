@@ -19,11 +19,20 @@ let selectedDate = new Date();
 
 // 初始化
 function init() {
+  // 检查DOM元素是否存在
+  if (!currentTimeEl || !calendarDaysEl) {
+    console.warn('必要的DOM元素不存在，可能在Next.js应用中运行');
+    return; // 如果在Next.js应用中，不执行此脚本
+  }
+
   updateCurrentTime();
   setInterval(updateCurrentTime, 1000);
   renderCalendar();
   loadTodos();
   setupEventListeners();
+
+  // 在控制台输出初始化成功信息，以便调试
+  console.log('日历待办事项脚本初始化成功');
 }
 
 // 更新当前时间
@@ -195,6 +204,12 @@ function renderTodosByDate(date, allTodos) {
 
 // 设置事件监听
 function setupEventListeners() {
+  // 确保元素存在
+  if (!prevMonthBtn || !nextMonthBtn || !addTodoBtn || !cancelTodoBtn || !todoForm) {
+    console.warn('无法设置事件监听，DOM元素不存在');
+    return;
+  }
+
   // 上个月
   prevMonthBtn.addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
@@ -211,6 +226,7 @@ function setupEventListeners() {
   addTodoBtn.addEventListener('click', () => {
     todoDateInput.value = selectedDate.toISOString().split('T')[0];
     todoFormModal.classList.remove('hidden');
+    console.log('点击添加任务按钮，打开表单');
   });
   
   // 取消添加
@@ -222,7 +238,28 @@ function setupEventListeners() {
   // 提交表单
   todoForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    console.log('提交表单');
     addTodo();
+  });
+
+  // 添加日历中点击添加的事件处理
+  document.querySelectorAll('.calendar-cell').forEach(cell => {
+    cell.addEventListener('click', function(e) {
+      if (e.target.classList.contains('hover:text-blue-400') || e.target.closest('.hover:text-blue-400')) {
+        // 点击了"点击添加"文本
+        const dateText = this.querySelector('.calendar-date').textContent;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        selectedDate = new Date(year, month, parseInt(dateText));
+        
+        // 打开任务表单
+        if (todoDateInput && todoFormModal) {
+          todoDateInput.value = selectedDate.toISOString().split('T')[0];
+          todoFormModal.classList.remove('hidden');
+          console.log('点击日历中的添加，打开表单，日期:', selectedDate);
+        }
+      }
+    });
   });
 }
 
@@ -307,4 +344,6 @@ function getPriorityColor(priority) {
 }
 
 // 初始化应用
-document.addEventListener('DOMContentLoaded', init); 
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(init, 500); // 延迟初始化，确保DOM已完全加载
+}); 

@@ -13,7 +13,8 @@ function PopupApp() {
   const [newTask, setNewTask] = useState({
     title: '',
     date: new Date().toISOString().split('T')[0],
-    priority: 'medium' as 'low' | 'medium' | 'high'
+    priority: 'medium' as 'low' | 'medium' | 'high',
+    repeat: 'none' as 'none' | 'daily' | 'weekly' | 'monthly'
   });
 
   // 在组件挂载时加载待办事项
@@ -34,7 +35,8 @@ function PopupApp() {
     setNewTask({
       title: '',
       date: selectedDate,
-      priority: 'medium' as 'low' | 'medium' | 'high'
+      priority: 'medium' as 'low' | 'medium' | 'high',
+      repeat: 'none' as 'none' | 'daily' | 'weekly' | 'monthly'
     });
     setShowAddForm(false);
   };

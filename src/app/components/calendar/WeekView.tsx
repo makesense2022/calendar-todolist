@@ -15,6 +15,7 @@ import {
 } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useTodoStore } from '@/store/useTodoStore';
+import { useDateStore } from '@/store/useDateStore';
 import { motion } from 'framer-motion';
 import { Todo } from '@/types/todo';
 
@@ -23,7 +24,8 @@ interface WeekViewProps {
 }
 
 const WeekView: React.FC<WeekViewProps> = ({ onDayClick }) => {
-  const { currentDate, getTodosByDate } = useTodoStore();
+  const { todos } = useTodoStore();
+  const { currentDate } = useDateStore();
   
   // 当前周的开始和结束
   const weekStart = startOfWeek(currentDate, { locale: zhCN });
@@ -37,6 +39,14 @@ const WeekView: React.FC<WeekViewProps> = ({ onDayClick }) => {
     start: startOfDay(currentDate),
     end: endOfDay(currentDate)
   }).filter(hour => getHours(hour) >= 7 && getHours(hour) <= 22); // 只显示7点到22点
+  
+  // 获取当天的任务
+  const getTodosByDate = (date: Date) => {
+    return todos.filter(todo => {
+      if (!todo.date) return false;
+      return isSameDay(parseISO(todo.date), date);
+    });
+  };
   
   // 获取某一天某一小时的任务
   const getHourTodos = (day: Date, hour: Date) => {

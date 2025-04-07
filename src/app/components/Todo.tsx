@@ -11,7 +11,7 @@ interface TodoProps {
 }
 
 const Todo: React.FC<TodoProps> = ({ className, onClose }) => {
-  const { todos, toggleCompleted } = useTodoStore();
+  const { todos, toggleTodoCompletion } = useTodoStore();
   const [showForm, setShowForm] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<TodoType | undefined>(undefined);
 
@@ -93,7 +93,7 @@ const Todo: React.FC<TodoProps> = ({ className, onClose }) => {
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleCompleted(todo.id);
+                        toggleTodoCompletion(todo.id);
                       }}
                     >
                       {todo.completed && <FiCheck className="text-white" size={12} />}
@@ -147,7 +147,7 @@ const Todo: React.FC<TodoProps> = ({ className, onClose }) => {
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleCompleted(todo.id);
+                        toggleTodoCompletion(todo.id);
                       }}
                     >
                       {todo.completed && <FiCheck className="text-white" size={12} />}

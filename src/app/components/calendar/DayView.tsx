@@ -7,10 +7,12 @@ import {
   endOfDay,
   isSameHour,
   parseISO,
-  getHours
+  getHours,
+  isSameDay
 } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useTodoStore } from '@/store/useTodoStore';
+import { useDateStore } from '@/store/useDateStore';
 import { motion } from 'framer-motion';
 import { Todo } from '@/types/todo';
 
@@ -19,13 +21,22 @@ interface DayViewProps {
 }
 
 const DayView: React.FC<DayViewProps> = ({ onTimeClick }) => {
-  const { currentDate, getTodosByDate } = useTodoStore();
+  const { todos } = useTodoStore();
+  const { currentDate } = useDateStore();
   
   // 一天中的时间段（每小时）
   const dayHours = eachHourOfInterval({ 
     start: startOfDay(currentDate),
     end: endOfDay(currentDate)
   });
+  
+  // 获取当天的任务
+  const getTodosByDate = (date: Date) => {
+    return todos.filter(todo => {
+      if (!todo.date) return false;
+      return isSameDay(parseISO(todo.date), date);
+    });
+  };
   
   // 获取某一小时的任务
   const getHourTodos = (hour: Date) => {

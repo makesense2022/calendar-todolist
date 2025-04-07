@@ -14,7 +14,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ onTodoClick, onNewTask }) => {
-  const { view } = useViewStore();
+  const { currentView } = useViewStore();
   const [showForm, setShowForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [todoToEdit, setTodoToEdit] = useState<Todo | undefined>(undefined);
@@ -51,21 +51,21 @@ const Calendar: React.FC<CalendarProps> = ({ onTodoClick, onNewTask }) => {
       
       <div className="flex-grow overflow-hidden">
         <AnimatePresence mode="wait">
-          {view === 'month' && (
+          {currentView === 'month' && (
             <MonthView 
               onDayClick={handleDayClick} 
               key="month-view"
             />
           )}
           
-          {view === 'week' && (
+          {currentView === 'week' && (
             <WeekView 
               onDayClick={handleDayClick} 
               key="week-view"
             />
           )}
           
-          {view === 'day' && (
+          {currentView === 'day' && (
             <DayView 
               onTimeClick={handleDayClick} 
               key="day-view"

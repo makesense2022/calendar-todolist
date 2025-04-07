@@ -81,7 +81,20 @@ const TodoItem: React.FC<{
 };
 
 const TodoList: React.FC<TodoListProps> = ({ date, onEditTodo }) => {
-  const { todos, getTodosByDate, toggleCompleted } = useTodoStore();
+  const { todos, toggleTodoCompletion } = useTodoStore();
+  
+  // 自定义函数，按日期过滤任务
+  const getTodosByDate = (date: Date) => {
+    return todos.filter((todo) => {
+      if (!todo.date) return false;
+      const todoDate = parseISO(todo.date);
+      return (
+        todoDate.getDate() === date.getDate() &&
+        todoDate.getMonth() === date.getMonth() &&
+        todoDate.getFullYear() === date.getFullYear()
+      );
+    });
+  };
   
   // 如果提供了特定日期，就获取那天的任务，否则获取所有任务
   const todosToDisplay = date
@@ -159,7 +172,7 @@ const TodoList: React.FC<TodoListProps> = ({ date, onEditTodo }) => {
             <TodoItem 
               key={todo.id}
               todo={todo}
-              onToggle={() => toggleCompleted(todo.id)}
+              onToggle={() => toggleTodoCompletion(todo.id)}
               onEdit={() => onEditTodo(todo)}
             />
           ))}
@@ -176,7 +189,7 @@ const TodoList: React.FC<TodoListProps> = ({ date, onEditTodo }) => {
               <TodoItem 
                 key={todo.id}
                 todo={todo}
-                onToggle={() => toggleCompleted(todo.id)}
+                onToggle={() => toggleTodoCompletion(todo.id)}
                 onEdit={() => onEditTodo(todo)}
               />
             ))}

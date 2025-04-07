@@ -5,14 +5,7 @@ import { format, parseISO, isSameDay } from 'date-fns';
 // 添加Chrome API类型声明
 declare global {
   interface Window {
-    chrome?: {
-      storage?: {
-        local: {
-          get: (keys: string[], callback: (result: any) => void) => void;
-          set: (items: object, callback?: () => void) => void;
-        }
-      }
-    }
+    chrome: typeof chrome;
   }
 }
 
@@ -24,6 +17,7 @@ export type Todo = {
   time?: string;
   completed: boolean;
   priority: 'low' | 'medium' | 'high';
+  repeat: 'none' | 'daily' | 'weekly' | 'monthly';
   isHistorical?: boolean;
 };
 
