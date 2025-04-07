@@ -1,7 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "installCommand": "npm install --no-audit --no-fund",
+  "buildCommand": "yarn vercel-build",
+  "installCommand": "yarn install --frozen-lockfile",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  }
 } 
