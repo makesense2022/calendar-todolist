@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 日历任务管理系统
 
-## Getting Started
+一个现代化的日历和待办事项管理应用，支持多种视图和丰富的任务管理功能。
 
-First, run the development server:
+## 功能特点
+
+- **日历视图**：支持月/周/日三种视图切换
+- **待办事项管理**：创建、编辑、删除和查看待办事项
+- **任务属性**：支持标题、日期、时间、优先级、备注等属性
+- **重复任务**：支持设置每天/每周/每月重复的任务
+- **本地存储**：使用 localStorage 保存数据，支持离线使用
+
+## 技术栈
+
+- **Next.js** - React 框架
+- **TypeScript** - 类型安全的 JavaScript
+- **Tailwind CSS** - 实用优先的 CSS 框架
+- **Zustand** - 状态管理
+- **Framer Motion** - 动画库
+- **Date-fns** - 日期处理
+- **React Hook Form** - 表单处理
+
+## 运行项目
 
 ```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# 构建生产版本
+npm run build
+
+# 启动生产服务器
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 开发说明
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 应用基于组件化架构设计
+- 使用 Zustand 进行状态管理，所有数据保存在 localStorage
+- 响应式设计，适配桌面和移动设备
+- 支持浅色/深色模式
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 使用方法
 
-## Learn More
+1. 选择日历视图（月/周/日）
+2. 点击日期或时间槽创建新任务
+3. 在右侧边栏查看和管理所有任务
+4. 点击任务可查看详情和编辑
 
-To learn more about Next.js, take a look at the following resources:
+## 联系与支持
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+如有问题或建议，请通过 Issues 提交反馈。
