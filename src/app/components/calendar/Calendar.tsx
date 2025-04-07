@@ -10,9 +10,10 @@ import { AnimatePresence } from 'framer-motion';
 
 interface CalendarProps {
   onTodoClick?: (todo: Todo) => void;
+  onNewTask?: () => void;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ onTodoClick }) => {
+const Calendar: React.FC<CalendarProps> = ({ onTodoClick, onNewTask }) => {
   const { view } = useViewStore();
   const [showForm, setShowForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -21,12 +22,21 @@ const Calendar: React.FC<CalendarProps> = ({ onTodoClick }) => {
   const handleDayClick = (date: Date) => {
     setSelectedDate(date);
     setTodoToEdit(undefined);
-    setShowForm(true);
+    
+    if (onNewTask) {
+      onNewTask();
+    } else {
+      setShowForm(true);
+    }
   };
   
   const handleTodoEdit = (todo: Todo) => {
-    setTodoToEdit(todo);
-    setShowForm(true);
+    if (onTodoClick) {
+      onTodoClick(todo);
+    } else {
+      setTodoToEdit(todo);
+      setShowForm(true);
+    }
   };
   
   const handleFormClose = () => {
@@ -64,7 +74,7 @@ const Calendar: React.FC<CalendarProps> = ({ onTodoClick }) => {
         </AnimatePresence>
       </div>
       
-      {showForm && (
+      {showForm && !onTodoClick && (
         <TodoForm 
           initialDate={selectedDate} 
           todoToEdit={todoToEdit}

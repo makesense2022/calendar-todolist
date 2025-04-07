@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, ControllerRenderProps } from 'react-hook-form';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { Todo, Priority, RepeatType } from '@/types/todo';
@@ -75,7 +75,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                 </label>
                 <input
                   type="text"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
                   placeholder="请输入任务标题"
                   {...register('title', { required: '请输入任务标题' })}
                 />
@@ -94,7 +94,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                     <Controller
                       control={control}
                       name="date"
-                      render={({ field }) => (
+                      render={({ field }: { field: ControllerRenderProps<FormData, 'date'> }) => (
                         <DatePicker
                           selected={selectedDate}
                           onChange={(date: Date | null) => {
@@ -104,7 +104,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                             }
                           }}
                           dateFormat="yyyy/MM/dd"
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
                         />
                       )}
                     />
@@ -118,7 +118,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                   </label>
                   <input
                     type="time"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
                     {...register('time')}
                   />
                 </div>
@@ -169,7 +169,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                   重复
                 </label>
                 <select
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
                   {...register('repeat')}
                 >
                   <option value="none">不重复</option>
@@ -186,7 +186,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                 </label>
                 <textarea
                   rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border resize-none"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border resize-none"
                   placeholder="添加备注..."
                   {...register('note')}
                 ></textarea>
@@ -216,7 +216,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialDate, todoToEdit, onClose })
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none"
                   >
                     {todoToEdit ? '保存' : '创建'}
                   </button>

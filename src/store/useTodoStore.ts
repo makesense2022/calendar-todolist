@@ -4,15 +4,16 @@ import { Todo, Priority, RepeatType } from '@/types/todo';
 import { v4 as uuidv4 } from 'uuid';
 import { isSameDay, format, addDays, addWeeks, addMonths, parseISO } from 'date-fns';
 
-interface TodoStore {
+interface TodoState {
   todos: Todo[];
-  addTodo: (todo: Omit<Todo, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  selectedTodoId: string | null;
+  isFormOpen: boolean;
+  addTodo: (todoData: Omit<Todo, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  updateTodo: (id: string, todoData: Partial<Omit<Todo, 'id' | 'createdAt' | 'updatedAt'>>) => void;
   deleteTodo: (id: string) => void;
-  updateTodo: (id: string, todo: Partial<Todo>) => void;
-  toggleCompleted: (id: string) => void;
-  getTodosByDate: (date: Date) => Todo[];
-  currentDate: Date;
-  setCurrentDate: (date: Date) => void;
+  toggleTodoCompletion: (id: string) => void;
+  setSelectedTodoId: (id: string | null) => void;
+  setIsFormOpen: (isOpen: boolean) => void;
 }
 
 // 处理重复任务
@@ -61,51 +62,69 @@ const handleRepeatingTodos = (todos: Todo[]): Todo[] => {
   return [...todos, ...repeatingTodos];
 };
 
-export const useTodoStore = create<TodoStore>()(
+export const useTodoStore = create<TodoState>()(
   persist(
     (set, get) => ({
       todos: [],
-      currentDate: new Date(),
+      selectedTodoId: null,
+      isFormOpen: false,
       
-      setCurrentDate: (date: Date) => set({ currentDate: date }),
-      
-      addTodo: (todoData) => set(state => {
+      addTodo: (todoData) => {
+        const now = format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss');
         const newTodo: Todo = {
-          ...todoData,
           id: uuidv4(),
-          completed: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          ...todoData,
+          createdAt: now,
+          updatedAt: now,
         };
-        return { todos: [...state.todos, newTodo] };
-      }),
+
+        set((state) => ({
+          todos: [...state.todos, newTodo],
+        }));
+      },
       
-      deleteTodo: (id: string) => set(state => ({
-        todos: state.todos.filter(todo => todo.id !== id)
-      })),
+      updateTodo: (id, todoData) => {
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo.id === id
+              ? {
+                  ...todo,
+                  ...todoData,
+                  updatedAt: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss'),
+                }
+              : todo
+          ),
+        }));
+      },
       
-      updateTodo: (id: string, todoData: Partial<Todo>) => set(state => ({
-        todos: state.todos.map(todo => 
-          todo.id === id 
-            ? { ...todo, ...todoData, updatedAt: new Date().toISOString() } 
-            : todo
-        )
-      })),
+      deleteTodo: (id) => {
+        set((state) => ({
+          todos: state.todos.filter((todo) => todo.id !== id),
+          selectedTodoId: state.selectedTodoId === id ? null : state.selectedTodoId,
+          isFormOpen: state.selectedTodoId === id ? false : state.isFormOpen,
+        }));
+      },
       
-      toggleCompleted: (id: string) => set(state => ({
-        todos: state.todos.map(todo => 
-          todo.id === id 
-            ? { ...todo, completed: !todo.completed, updatedAt: new Date().toISOString() } 
-            : todo
-        )
-      })),
+      toggleTodoCompletion: (id) => {
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo.id === id
+              ? {
+                  ...todo,
+                  completed: !todo.completed,
+                  updatedAt: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss'),
+                }
+              : todo
+          ),
+        }));
+      },
       
-      getTodosByDate: (date: Date) => {
-        const processedTodos = handleRepeatingTodos(get().todos);
-        return processedTodos.filter(todo => {
-          const todoDate = parseISO(todo.date);
-          return isSameDay(todoDate, date);
-        });
+      setSelectedTodoId: (id) => {
+        set({ selectedTodoId: id });
+      },
+      
+      setIsFormOpen: (isOpen) => {
+        set({ isFormOpen: isOpen });
       },
     }),
     {

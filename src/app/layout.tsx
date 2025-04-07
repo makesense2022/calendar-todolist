@@ -1,27 +1,19 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
+import './globals.css';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "日历任务管理",
-  description: "现代化的日历和待办事项管理应用",
+  title: '日历待办事项',
+  description: '简单高效的日历待办事项管理工具',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="zh-CN">
-      <body className={inter.className}>
-        {children}
-      </body>
+    <html lang="zh">
+      <body>{children}</body>
     </html>
   );
 }

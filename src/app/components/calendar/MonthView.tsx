@@ -16,67 +16,60 @@ import { useTodoStore } from '@/store/useTodoStore';
 import { motion } from 'framer-motion';
 import { Todo } from '@/types/todo';
 import { FiClipboard } from 'react-icons/fi';
+import { useDateStore } from '../../../store/useDateStore';
 
 interface DayProps {
-  date: Date;
+  day: Date;
   isCurrentMonth: boolean;
   isToday: boolean;
+  isSelected: boolean;
   todos: Todo[];
-  onDayClick: (date: Date) => void;
+  onClick: (date: Date) => void;
 }
 
-const DayCell: React.FC<DayProps> = ({ 
-  date, 
-  isCurrentMonth, 
-  isToday: isCurrentDay, 
-  todos, 
-  onDayClick 
-}) => {
-  const dayNumber = format(date, 'd');
-  
-  // 渲染任务点
-  const renderTaskDots = () => {
-    return todos.slice(0, 3).map((todo, index) => {
-      let dotColorClass = 'bg-green-500'; // 默认低优先级
-      
-      if (todo.priority === 'high') {
-        dotColorClass = 'bg-red-500';
-      } else if (todo.priority === 'medium') {
-        dotColorClass = 'bg-yellow-500';
-      }
-      
-      return <div key={todo.id} className={`w-1.5 h-1.5 rounded-full ${dotColorClass} m-0.5`} />;
-    });
-  };
-  
-  // 如果有更多任务，显示一个加号指示器
-  const hasMoreTasks = todos.length > 3;
-  
+const Day: React.FC<DayProps> = ({ day, isCurrentMonth, isToday, isSelected, todos, onClick }) => {
   return (
     <div 
-      className={`h-full flex flex-col items-center justify-center relative cursor-pointer transition-all border border-gray-200
-        ${!isCurrentMonth ? 'bg-gray-50/50 text-gray-400' : ''} 
-        ${isCurrentDay ? 'bg-indigo-50/50' : ''}`}
-      onClick={() => onDayClick(date)}
+      className={`
+        relative h-full border border-gray-200 p-1 transition-colors
+        ${isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-400'} 
+        ${isToday ? 'ring-2 ring-indigo-500 ring-inset' : ''}
+        ${isSelected ? 'bg-indigo-50' : ''}
+        hover:bg-gray-50 cursor-pointer
+      `}
+      onClick={() => onClick(day)}
     >
-      <div className={`h-8 w-8 flex items-center justify-center rounded-full mb-1 
-        ${isCurrentDay ? 'bg-indigo-600 text-white' : ''}`}>
-        {dayNumber}
-      </div>
-      
-      {todos.length > 0 ? (
-        <div className="flex flex-wrap justify-center mt-1 max-w-[70%]">
-          {renderTaskDots()}
-          {hasMoreTasks && (
-            <span className="text-xs text-gray-500 ml-1">+{todos.length - 3}</span>
+      <div className="flex flex-col h-full">
+        <div className="text-right mb-1">
+          <span className={`
+            flex items-center justify-center w-7 h-7 ml-auto text-sm font-medium
+            ${isToday ? 'bg-indigo-500 text-white rounded-full' : ''}
+          `}>
+            {format(day, 'd')}
+          </span>
+        </div>
+        <div className="overflow-y-auto flex-grow">
+          {todos.slice(0, 3).map((todo) => (
+            <div 
+              key={todo.id} 
+              className={`
+                mb-1 px-2 py-1 rounded-md text-xs truncate
+                ${todo.priority === 'high' ? 'bg-red-100 text-red-800' : 
+                  todo.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
+                  'bg-green-100 text-green-800'}
+                ${todo.completed ? 'line-through opacity-60' : ''}
+              `}
+            >
+              {todo.title}
+            </div>
+          ))}
+          {todos.length > 3 && (
+            <div className="text-xs text-gray-500 px-2">
+              +{todos.length - 3} 更多
+            </div>
           )}
         </div>
-      ) : isCurrentDay && isCurrentMonth ? (
-        <div className="flex flex-col items-center text-center">
-          <FiClipboard className="text-gray-800 mb-1" size={18} />
-          <span className="text-xs text-gray-500">今天没有任务</span>
-        </div>
-      ) : null}
+      </div>
     </div>
   );
 };
@@ -86,7 +79,8 @@ interface MonthViewProps {
 }
 
 const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
-  const { currentDate, getTodosByDate } = useTodoStore();
+  const { currentDate } = useDateStore();
+  const { todos } = useTodoStore();
   const [days, setDays] = useState<Date[]>([]);
   
   // 一周中的每一天
@@ -122,52 +116,66 @@ const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
   }, [currentDate]);
   
   // 计算是否显示"点击任意日期创建新任务"的提示
-  const showEmptyState = days.length > 0 && days.every(day => getTodosByDate(day).length === 0);
+  const showEmptyState = days.length > 0 && days.every(day => todos.filter(todo => {
+    if (!todo.date) return false;
+    return isSameDay(new Date(todo.date), day);
+  }).length === 0);
 
   return (
-    <div className="flex flex-col h-full">
-      {/* 星期标题行 */}
-      <div className="grid grid-cols-7 border-b border-gray-200 py-2 text-center text-gray-500 font-medium">
-        {weekDays.map((day) => (
-          <div key={day} className="text-sm">
+    <motion.div 
+      className="h-full overflow-hidden flex flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* 星期栏 */}
+      <div className="grid grid-cols-7 border-b border-gray-200">
+        {weekDays.map((day, index) => (
+          <div 
+            key={index} 
+            className="py-2 text-center text-sm font-medium text-gray-500"
+          >
             {day}
           </div>
         ))}
       </div>
       
-      {/* 日期网格 */}
-      <motion.div 
-        className="grid grid-cols-7 grid-rows-6 flex-grow h-[calc(100%-40px)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        {days.map((day) => {
-          const isInCurrentMonth = isSameMonth(day, currentDate);
-          const isCurrentDay = isToday(day);
-          const dayTodos = getTodosByDate(day);
-          
-          return (
-            <DayCell
-              key={day.toString()}
-              date={day}
-              isCurrentMonth={isInCurrentMonth}
-              isToday={isCurrentDay}
-              todos={dayTodos}
-              onDayClick={onDayClick}
-            />
-          );
-        })}
-      </motion.div>
+      {/* 日历格子 */}
+      <div className="flex-1 overflow-auto">
+        <div className="grid grid-cols-7 grid-rows-6 h-full">
+          {days.map((day) => {
+            const isInCurrentMonth = isSameMonth(day, currentDate);
+            const isCurrentDay = isSameDay(day, new Date());
+            const dayTodos = todos.filter(todo => {
+              if (!todo.date) return false;
+              return isSameDay(new Date(todo.date), day);
+            });
+            
+            return (
+              <Day
+                key={day.toString()}
+                day={day}
+                isCurrentMonth={isInCurrentMonth}
+                isToday={isCurrentDay}
+                isSelected={false}
+                todos={dayTodos}
+                onClick={onDayClick}
+              />
+            );
+          })}
+        </div>
+      </div>
       
-      {/* 空状态提示 */}
+      {/* 提示文本 */}
       {showEmptyState && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/80 rounded-lg p-4 shadow-sm text-center">
-          <p className="text-gray-500 text-sm">点击任意日期创建新任务</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 pointer-events-none">
+          <div className="text-center text-gray-500">
+            <p className="text-lg">点击任意日期创建新任务</p>
+          </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
