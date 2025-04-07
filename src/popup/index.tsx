@@ -296,7 +296,13 @@ function PopupApp() {
       
       <div className="mt-1 text-center">
         <button 
-          onClick={() => chrome.tabs.create({ url: 'index.html' })}
+          onClick={() => {
+            if (typeof chrome !== 'undefined' && chrome.tabs) {
+              chrome.tabs.create({ url: 'index.html' });
+            } else {
+              window.open('/index.html', '_blank');
+            }
+          }}
           className="text-sm bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded"
         >
           打开完整日历应用
