@@ -14,7 +14,8 @@
     "build:extension": "webpack --config webpack.config.js",
     "watch:extension": "webpack --config webpack.config.js --watch",
     "clean": "rm -rf node_modules .next package-lock.json yarn.lock pnpm-lock.yaml dist",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "build:static": "next build"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

@@ -95,10 +95,8 @@ const MonthView: React.FC<MonthViewProps> = ({ onDayClick }) => {
   }, [currentDate]);
   
   const weekdays = useMemo(() => {
-    return Array.from({ length: 7 }).map((_, i) => {
-      const date = new Date(2021, 0, i + 1); // 使用周一开始的周顺序
-      return format(date, 'E', { locale: zhCN });
-    });
+    // 直接指定星期顺序为周一到周日
+    return ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
   }, []);
   
   // 按日期分组待办事项

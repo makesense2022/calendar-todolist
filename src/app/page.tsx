@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Calendar from '../components/calendar/Calendar';
 import TodoList from '../components/todo/TodoList';
 import TodoForm from '../components/todo/TodoForm';
-import Weather from '../components/weather/Weather';
 import { useTodoStore } from '@/store/useTodoStore';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
@@ -37,8 +36,6 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col bg-gray-50">
-      <Weather />
-      
       <div className="flex flex-1 overflow-hidden p-4">
         <div className="flex-1 overflow-hidden rounded-lg shadow-lg mr-4">
           <Calendar onDayClick={handleNewTask} />

@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['src/popup'],
+  output: 'export',
+  distDir: 'dist',
   webpack: (config, { isServer }) => {
     // 避免处理browser-specific API文件
     if (isServer) {
